@@ -1,4 +1,8 @@
 from flask import Flask, render_template
+import pygments
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
 import os
 import subprocess
 
@@ -43,10 +47,25 @@ def main() -> None:
     cloneRepo()
 
     app = Flask(__name__)
-
+    
     @app.route('/')
-    def home():
-        return render_template('index.html')
+    def index():
+        # Sample Python code - you can replace this with any Python file content
+        with open('/home/daniel/Documents/myCode/luigisHomeworkWebViewer/luigisHomework/myCode/age.py', 'r') as file:
+            code = file.read()
+        
+        # Generate highlighted HTML
+        highlighted_code = highlight(code, PythonLexer(), HtmlFormatter())
+        
+        # Get the CSS styles
+        css_styles = HtmlFormatter(style='solarized-dark').get_style_defs('.highlight')
+
+        print(css_styles)
+
+        return render_template('index.html', 
+                            code=highlighted_code, 
+                            css_styles=css_styles)
+
 
     app.run(debug=True)
 
